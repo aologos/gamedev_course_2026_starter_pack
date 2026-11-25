@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { track } from '../analytics';
 
 const PLAYER_SPEED = 260;
 
@@ -15,6 +16,7 @@ export class GameScene extends Phaser.Scene {
   private wasd!: Record<'up' | 'down' | 'left' | 'right', Phaser.Input.Keyboard.Key>;
   private scoreText!: Phaser.GameObjects.Text;
   private score = 0;
+  private runId = '';
 
   constructor() {
     super('GameScene');
@@ -59,6 +61,9 @@ export class GameScene extends Phaser.Scene {
       left: Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D,
     }) as Record<'up' | 'down' | 'left' | 'right', Phaser.Input.Keyboard.Key>;
+
+    this.runId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    track('game_start', { run_id: this.runId });
   }
 
   update(_time: number, delta: number): void {
